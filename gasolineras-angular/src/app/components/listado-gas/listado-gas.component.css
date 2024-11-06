@@ -70,3 +70,19 @@ body {
     color: #333;
     text-align: center;
 }
+
+.filters {
+    margin-bottom: 20px;
+  }
+  
+  .filters label {
+    margin-right: 10px;
+  }
+  
+  .filters input {
+    margin-right: 20px;
+  }
+  
+  .filters button {
+    padding: 5px 10px;
+  }

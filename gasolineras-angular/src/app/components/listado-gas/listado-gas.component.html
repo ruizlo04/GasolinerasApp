@@ -1,19 +1,32 @@
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Listado de Gasolineras</h1>
+      <div class="header">
+        <h1>Listado de Gasolineras</h1>
+      </div>
+      <div class="filters">
+        <label for="fuelType">Tipo de Combustible:</label>
+        <input id="fuelType" [(ngModel)]="fuelType" placeholder="Tipo de Combustible" />
+  
+        <label for="minPrice">Precio Mínimo:</label>
+        <input id="minPrice" type="number" [(ngModel)]="minPrice" placeholder="Precio Mínimo" />
+  
+        <label for="maxPrice">Precio Máximo:</label>
+        <input id="maxPrice" type="number" [(ngModel)]="maxPrice" placeholder="Precio Máximo" />
+  
+        <label for="postalCode">Código Postal:</label>
+        <input id="postalCode" [(ngModel)]="postalCode" placeholder="Código Postal" />
+  
+        <button (click)="filterGasolineras()">Filtrar</button>
+      </div>
+      <div class="grid">
+        <div *ngFor="let gasolinera of filteredGasolineras" class="gas-station-card">
+          <div class="info">
+            <p>Estación: {{ gasolinera.nombre }}, IDEESS: {{ gasolinera.id }}</p>
+            <p>Gasolina 95: {{ gasolinera.price95 }}</p>
+            <p>Diesel: {{ gasolinera.priceDiesel }}</p>
+            <p>Código postal: {{ gasolinera.postalCode }}</p>
+          </div>
         </div>
-        <div class="grid">
-            @for(gasolinera of listadoGasolineras; track listadoGasolineras.indexOf(gasolinera)) {
-                <div class="gas-station-card">
-                    <div class="info">
-                        <p>Estación: {{ gasolinera.nombre }}, IDEESS: {{ gasolinera.id }}</p>
-                        <p>Gasolina 95: {{gasolinera.price95}}</p>
-                        <p>Diesel: {{gasolinera.priceDiesel}}</p>
-                        <p>Código postal: {{gasolinera.postalCode}}</p>
-                    </div>
-                </div>
-            }
-        </div>
+    </div>
     </div>
 </body>
