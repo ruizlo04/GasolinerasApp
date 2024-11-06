@@ -10,6 +10,11 @@ import { GasolineraService } from '../../services/gasolinera.service';
 export class ListadoGasComponent implements OnInit {
 
   listadoGasolineras: Gasolinera[] = [];
+  filteredGasolineras: Gasolinera[] = [];
+  fuelType: string = '';
+  minPrice: number = 0;
+  maxPrice: number = Infinity;
+  postalCode: string = '';
 
   constructor(private gasService: GasolineraService) {}
 
@@ -21,26 +26,39 @@ export class ListadoGasComponent implements OnInit {
         parsedData = JSON.parse(respuestaEnString);
         let arrayGasolineras = parsedData['ListaEESSPrecio'];
         this.listadoGasolineras = this.cleanProperties(arrayGasolineras);
+        this.filteredGasolineras = this.listadoGasolineras;
       } catch (error) {
         console.error('Error parsing JSON:', error);
       }
     });
   }
 
-  private cleanProperties(arrayGasolineras: any) {
-    let newArray: Gasolinera[] = [];
-    arrayGasolineras.forEach((gasolineraChusquera: any) => {
-      const gasolineraConNombresGuenos: any = {};
-      let gasolinera = new Gasolinera(
-        gasolineraChusquera['IDEESS'],
-        gasolineraChusquera['Rótulo'],
-        gasolineraChusquera['Precio Gasolina 95 E5'],
-        gasolineraChusquera['Precio Gasoleo A'],
-        gasolineraChusquera['C.P.']
-      );
+  private cleanProperties(arrayGasolineras: any): Gasolinera[] {
+    return arrayGasolineras
+      .filter((gasolineraChusquera: any) => {
+        return gasolineraChusquera['IDEESS'] && gasolineraChusquera['Rótulo'];
+      })
+      .map((gasolineraChusquera: any) => {
+        return new Gasolinera(
+          gasolineraChusquera['IDEESS'],
+          gasolineraChusquera['Rótulo'],
+          parseFloat(gasolineraChusquera['Precio Gasolina 95 E5'].replace(',', '.')),
+          parseFloat(gasolineraChusquera['Precio Gasoleo A'].replace(',', '.')),
+          gasolineraChusquera['C.P.']
+        );
+      });
+  }
 
-      newArray.push(gasolinera);
+  filterGasolineras() {
+    this.filteredGasolineras = this.listadoGasolineras.filter(gasolinera => {
+      const matchesFuelType = this.fuelType === '' || gasolinera.nombre.includes(this.fuelType);
+      const matchesPriceRange = gasolinera.price95 >= this.minPrice && gasolinera.price95 <= this.maxPrice;
+      const matchesPostalCode = this.postalCode === '' || gasolinera.postalCode === this.postalCode;
+      return matchesFuelType && matchesPriceRange && matchesPostalCode;
     });
-    return newArray;
+
+    if (this.filteredGasolineras.length === 0) {
+      console.log('No hay resultados que coincidan con la búsqueda.');
+    }
   }
 }
