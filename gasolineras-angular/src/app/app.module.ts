@@ -7,8 +7,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ListadoGasComponent } from './components/listado-gas/listado-gas.component';
 import { provideHttpClient } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GoogleMapsPipe } from './pipes/google-maps.pipe';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
   declarations: [
@@ -20,6 +22,9 @@ import { GoogleMapsPipe } from './pipes/google-maps.pipe';
     BrowserModule,
     AppRoutingModule,
     NgbModule,
+    MatAutocompleteModule,
+    MatInputModule,
+    ReactiveFormsModule,
     FormsModule
   ],
   providers: [

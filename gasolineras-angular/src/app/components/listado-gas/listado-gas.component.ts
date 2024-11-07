@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { Gasolinera } from '../../modules/gasolinera.interface';
 import { GasolineraService } from '../../services/gasolinera.service';
 
@@ -14,7 +17,8 @@ export class ListadoGasComponent implements OnInit {
   fuelType: string = '';
   minPrice: number = 0;
   maxPrice: number = Infinity;
-  postalCode: string = '';
+  postalCodeControl = new FormControl();
+  filteredPostalCodes: Observable<string[]> | undefined;
 
   constructor(private gasService: GasolineraService) {}
 
@@ -27,6 +31,10 @@ export class ListadoGasComponent implements OnInit {
         let arrayGasolineras = parsedData['ListaEESSPrecio'];
         this.listadoGasolineras = this.cleanProperties(arrayGasolineras);
         this.filteredGasolineras = this.listadoGasolineras;
+        this.filteredPostalCodes = this.postalCodeControl.valueChanges.pipe(
+          startWith(''),
+          map(value => this._filterPostalCodes(value))
+        );
       } catch (error) {
         console.error('Error parsing JSON:', error);
       }
@@ -50,11 +58,17 @@ export class ListadoGasComponent implements OnInit {
       });
   }
 
+  private _filterPostalCodes(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    const postalCodes = this.listadoGasolineras.map(gasolinera => gasolinera.postalCode);
+    return [...new Set(postalCodes)].filter(postalCode => postalCode.toLowerCase().includes(filterValue));
+  }
+
   filterGasolineras() {
     this.filteredGasolineras = this.listadoGasolineras.filter(gasolinera => {
       const matchesFuelType = this.fuelType === '' || (this.fuelType === 'Gasolina 95' && gasolinera.price95 > 0) || (this.fuelType === 'Diesel' && gasolinera.priceDiesel > 0);
       const matchesPriceRange = gasolinera.price95 >= this.minPrice && gasolinera.price95 <= this.maxPrice;
-      const matchesPostalCode = this.postalCode === '' || gasolinera.postalCode === this.postalCode;
+      const matchesPostalCode = this.postalCodeControl.value === '' || gasolinera.postalCode === this.postalCodeControl.value;
       return matchesFuelType && matchesPriceRange && matchesPostalCode;
     });
 
