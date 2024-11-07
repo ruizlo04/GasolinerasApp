@@ -8,11 +8,13 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ListadoGasComponent } from './components/listado-gas/listado-gas.component';
 import { provideHttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { GoogleMapsPipe } from './pipes/google-maps.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     ListadoGasComponent,
+    GoogleMapsPipe,
   ],
   imports: [
     BrowserModule,

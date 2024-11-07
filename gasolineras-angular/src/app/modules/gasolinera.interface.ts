@@ -4,6 +4,7 @@ export class Gasolinera {
     public nombre: string,
     public price95: number,
     public priceDiesel: number,
-    public postalCode: string
+    public postalCode: string,
+    public direccion: string
   ) {}
 }
