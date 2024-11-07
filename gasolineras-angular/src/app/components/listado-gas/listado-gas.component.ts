@@ -19,27 +19,49 @@ export class ListadoGasComponent implements OnInit {
   maxPrice: number = Infinity;
   postalCodeControl = new FormControl();
   filteredPostalCodes: Observable<string[]> | undefined;
+  comunidadesAutonomas: any[] = [];
+  selectedComunidad: string = '';
+  comunidadMap: { [key: string]: string } = {}; 
 
   constructor(private gasService: GasolineraService) {}
 
   ngOnInit() {
     this.gasService.getGasolineras().subscribe((respuesta) => {
+      console.log('Respuesta completa de la API:', respuesta); 
       const respuestaEnString = JSON.stringify(respuesta);
       let parsedData;
       try {
         parsedData = JSON.parse(respuestaEnString);
         let arrayGasolineras = parsedData['ListaEESSPrecio'];
+        
+        console.log('Array de gasolineras procesado:', arrayGasolineras); 
+  
         this.listadoGasolineras = this.cleanProperties(arrayGasolineras);
         this.filteredGasolineras = this.listadoGasolineras;
+        
         this.filteredPostalCodes = this.postalCodeControl.valueChanges.pipe(
           startWith(''),
           map(value => this._filterPostalCodes(value))
         );
+        
+        console.log('Gasolineras después de limpiar propiedades:', this.listadoGasolineras);
       } catch (error) {
         console.error('Error parsing JSON:', error);
       }
     });
+  
+    this.gasService.getComunidadesAutonomas().subscribe((data) => {
+      console.log('Comunidades Autónomas desde la API:', data); 
+      this.comunidadesAutonomas = data;
+      this.comunidadMap = this.comunidadesAutonomas.reduce((acc: any, comunidad: any) => {
+        acc[comunidad.IDCCAA] = comunidad.CCAA;
+        return acc;
+      }, {});
+      
+      console.log('Mapa de comunidades (ID a Nombre):', this.comunidadMap);
+    });
   }
+  
 
   private cleanProperties(arrayGasolineras: any): Gasolinera[] {
     return arrayGasolineras
@@ -47,16 +69,24 @@ export class ListadoGasComponent implements OnInit {
         return gasolineraChusquera['IDEESS'] && gasolineraChusquera['Rótulo'];
       })
       .map((gasolineraChusquera: any) => {
-        return new Gasolinera(
+        console.log('Datos de gasolinera:', gasolineraChusquera); 
+        const gasolinera = new Gasolinera(
           gasolineraChusquera['IDEESS'],
           gasolineraChusquera['Rótulo'],
           parseFloat(gasolineraChusquera['Precio Gasolina 95 E5'].replace(',', '.')),
           parseFloat(gasolineraChusquera['Precio Gasoleo A'].replace(',', '.')),
           gasolineraChusquera['C.P.'],
-          gasolineraChusquera['Dirección']
+          gasolineraChusquera['Dirección'],
+          gasolineraChusquera['IDCCAA'] 
         );
+  
+        console.log('Gasolinera creada con IDCCAA:', gasolinera); 
+  
+        return gasolinera;
       });
   }
+  
+  
 
   private _filterPostalCodes(value: string): string[] {
     const filterValue = value.toLowerCase();
@@ -66,10 +96,18 @@ export class ListadoGasComponent implements OnInit {
 
   filterGasolineras() {
     this.filteredGasolineras = this.listadoGasolineras.filter(gasolinera => {
-      const matchesFuelType = this.fuelType === '' || (this.fuelType === 'Gasolina 95' && gasolinera.price95 > 0) || (this.fuelType === 'Diesel' && gasolinera.priceDiesel > 0);
+      const matchesFuelType = this.fuelType === '' || 
+        (this.fuelType === 'Gasolina 95' && gasolinera.price95 > 0) || 
+        (this.fuelType === 'Diesel' && gasolinera.priceDiesel > 0);
+
       const matchesPriceRange = gasolinera.price95 >= this.minPrice && gasolinera.price95 <= this.maxPrice;
       const matchesPostalCode = this.postalCodeControl.value === '' || gasolinera.postalCode === this.postalCodeControl.value;
-      return matchesFuelType && matchesPriceRange && matchesPostalCode;
+      const matchesComunidad = this.selectedComunidad === '' || gasolinera.comunidad === this.selectedComunidad;
+
+      console.log('Comunidad seleccionada (ID):', this.selectedComunidad);
+      console.log('IDCCAA de gasolinera:', gasolinera.comunidad);
+
+      return matchesFuelType && matchesPriceRange && matchesPostalCode && matchesComunidad;
     });
 
     if (this.filteredGasolineras.length === 0) {

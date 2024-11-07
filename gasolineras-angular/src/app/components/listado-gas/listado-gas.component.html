@@ -27,8 +27,17 @@
         </mat-autocomplete>
       </mat-form-field>
 
+      <label for="comunidad">Comunidad Autónoma:</label>
+      <select id="comunidad" [(ngModel)]="selectedComunidad">
+        <option value="">Todas</option>
+        <option *ngFor="let comunidad of comunidadesAutonomas" [value]="comunidad.IDCCAA">
+          {{ comunidad.CCAA }}
+        </option>
+      </select>
+
       <button (click)="filterGasolineras()">Filtrar</button>
     </div>
+
     <div class="grid">
       <div *ngFor="let gasolinera of filteredGasolineras" class="gas-station-card">
         <div class="info">
@@ -37,6 +46,8 @@
           <p>Diesel: {{ gasolinera.priceDiesel }}</p>
           <p>Código postal: {{ gasolinera.postalCode }}</p>
           <p>Dirección: {{ gasolinera.direccion }}</p>
+          <p>Comunidad Autónoma: {{ comunidadMap[gasolinera.comunidad] }}</p>
+          <input type="hidden" value="{{ gasolinera.comunidad }}" /> 
           <a [href]="gasolinera.direccion | googleMaps" target="_blank">Ver en Google Maps</a>
         </div>
       </div>
