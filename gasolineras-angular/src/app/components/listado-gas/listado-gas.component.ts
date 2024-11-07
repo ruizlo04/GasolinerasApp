@@ -44,7 +44,8 @@ export class ListadoGasComponent implements OnInit {
           gasolineraChusquera['Rótulo'],
           parseFloat(gasolineraChusquera['Precio Gasolina 95 E5'].replace(',', '.')),
           parseFloat(gasolineraChusquera['Precio Gasoleo A'].replace(',', '.')),
-          gasolineraChusquera['C.P.']
+          gasolineraChusquera['C.P.'],
+          gasolineraChusquera['Dirección']
         );
       });
   }
