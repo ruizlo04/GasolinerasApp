@@ -5,7 +5,11 @@
       </div>
       <div class="filters">
         <label for="fuelType">Tipo de Combustible:</label>
-        <input id="fuelType" [(ngModel)]="fuelType" placeholder="Tipo de Combustible" />
+        <select id="fuelType" [(ngModel)]="fuelType">
+          <option value="">Todos</option>
+          <option value="Gasolina 95">Gasolina 95</option>
+          <option value="Diesel">Diesel</option>
+        </select>
   
         <label for="minPrice">Precio Mínimo:</label>
         <input id="minPrice" type="number" [(ngModel)]="minPrice" placeholder="Precio Mínimo" />
