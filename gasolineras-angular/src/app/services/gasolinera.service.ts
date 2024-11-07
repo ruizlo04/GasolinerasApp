@@ -6,12 +6,11 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class GasolineraService {
-
   private comunidadesUrl = 'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/Listados/ComunidadesAutonomas/';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getGasolineras(){
+  getGasolineras() {
     return this.http.get(
       'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/'
     );
@@ -20,4 +19,10 @@ export class GasolineraService {
   getComunidadesAutonomas(): Observable<any> {
     return this.http.get(this.comunidadesUrl);
   }
+
+  getProvinciasByComunidad(idCCAA: string): Observable<any[]> {
+    const url = `https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/Listados/ProvinciasPorComunidad/${idCCAA}`;
+    return this.http.get<any[]>(url);  
+  }
+  
 }

@@ -28,10 +28,18 @@
       </mat-form-field>
 
       <label for="comunidad">Comunidad Autónoma:</label>
-      <select id="comunidad" [(ngModel)]="selectedComunidad">
+      <select id="comunidad" [(ngModel)]="selectedComunidad" (change)="onComunidadChange()">
         <option value="">Todas</option>
         <option *ngFor="let comunidad of comunidadesAutonomas" [value]="comunidad.IDCCAA">
           {{ comunidad.CCAA }}
+        </option>
+      </select>
+
+      <label for="provincia">Provincia:</label>
+      <select id="provincia" [(ngModel)]="selectedProvincia" [disabled]="!selectedComunidad">
+        <option value="">Seleccione Provincia</option>
+        <option *ngFor="let provincia of provincias" [value]="provincia.IDPovincia">
+          {{ provincia.nombre }}
         </option>
       </select>
 
@@ -47,8 +55,7 @@
           <p>Código postal: {{ gasolinera.postalCode }}</p>
           <p>Dirección: {{ gasolinera.direccion }}</p>
           <p>Comunidad Autónoma: {{ comunidadMap[gasolinera.comunidad] }}</p>
-          <input type="hidden" value="{{ gasolinera.comunidad }}" /> 
-          <a [href]="gasolinera.direccion | googleMaps" target="_blank">Ver en Google Maps</a>
+          <p>Provincia: {{ gasolinera.provincia }}</p>
         </div>
       </div>
     </div>
