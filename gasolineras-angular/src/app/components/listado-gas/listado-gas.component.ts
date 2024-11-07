@@ -51,7 +51,7 @@ export class ListadoGasComponent implements OnInit {
 
   filterGasolineras() {
     this.filteredGasolineras = this.listadoGasolineras.filter(gasolinera => {
-      const matchesFuelType = this.fuelType === '' || gasolinera.nombre.includes(this.fuelType);
+      const matchesFuelType = this.fuelType === '' || (this.fuelType === 'Gasolina 95' && gasolinera.price95 > 0) || (this.fuelType === 'Diesel' && gasolinera.priceDiesel > 0);
       const matchesPriceRange = gasolinera.price95 >= this.minPrice && gasolinera.price95 <= this.maxPrice;
       const matchesPostalCode = this.postalCode === '' || gasolinera.postalCode === this.postalCode;
       return matchesFuelType && matchesPriceRange && matchesPostalCode;
