@@ -18,7 +18,14 @@
       <input id="maxPrice" type="number" [(ngModel)]="maxPrice" placeholder="Precio Máximo" />
 
       <label for="postalCode">Código Postal:</label>
-      <input id="postalCode" [(ngModel)]="postalCode" placeholder="Código Postal" />
+      <mat-form-field>
+        <input type="text" matInput [formControl]="postalCodeControl" [matAutocomplete]="auto" placeholder="Código Postal">
+        <mat-autocomplete #auto="matAutocomplete">
+          <mat-option *ngFor="let option of filteredPostalCodes | async" [value]="option">
+            {{ option }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
 
       <button (click)="filterGasolineras()">Filtrar</button>
     </div>
