@@ -6,6 +6,7 @@ export class Gasolinera {
     public priceDiesel: number,
     public postalCode: string,
     public direccion: string,
-    public comunidad: string
+    public comunidad: string,
+    public provincia: string
   ) {}
 }
