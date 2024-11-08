@@ -1,49 +1,63 @@
-<body>
-  <div class="container">
-    <div class="header">
-      <h1>Listado de Gasolineras</h1>
-    </div>
+<div>
+    <header class="header">
+      <h1>RUTAFUEL</h1>
+    </header>
+    
     <div class="filters">
-      <label for="fuelType">Tipo de Combustible:</label>
-      <select id="fuelType" [(ngModel)]="fuelType">
-        <option value="">Todos</option>
-        <option value="Gasolina 95">Gasolina 95</option>
-        <option value="Diesel">Diesel</option>
-      </select>
+      <div class="filter-item">
+        <label for="fuelType">Tipo de Combustible:</label>
+        <select id="fuelType" [(ngModel)]="fuelType">
+          <option value="">Todos</option>
+          <option value="Gasolina 95">Gasolina 95</option>
+          <option value="Diesel">Diesel</option>
+        </select>
+      </div>
 
-      <label for="minPrice">Precio Mínimo:</label>
-      <input id="minPrice" type="number" [(ngModel)]="minPrice" placeholder="Precio Mínimo" />
+      <div class="filter-item">
+        <label for="minPrice">Precio Mínimo:</label>
+        <input id="minPrice" type="number" [(ngModel)]="minPrice" placeholder="Precio Mínimo" />
+      </div>
 
-      <label for="maxPrice">Precio Máximo:</label>
-      <input id="maxPrice" type="number" [(ngModel)]="maxPrice" placeholder="Precio Máximo" />
+      <div class="filter-item">
+        <label for="maxPrice">Precio Máximo:</label>
+        <input id="maxPrice" type="number" [(ngModel)]="maxPrice" placeholder="Precio Máximo" />
+      </div>
 
-      <label for="postalCode">Código Postal:</label>
-      <mat-form-field>
-        <input type="text" matInput [formControl]="postalCodeControl" [matAutocomplete]="auto" placeholder="Código Postal">
-        <mat-autocomplete #auto="matAutocomplete">
-          <mat-option *ngFor="let option of filteredPostalCodes | async" [value]="option">
-            {{ option }}
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+      <div class="filter-item">
+        <label for="postalCode">Código Postal:</label>
+        <mat-form-field appearance="outline">
+          <input type="text" matInput [formControl]="postalCodeControl" [matAutocomplete]="auto" placeholder="Código Postal">
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of filteredPostalCodes | async" [value]="option">
+              {{ option }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
 
-      <label for="comunidad">Comunidad Autónoma:</label>
-      <select id="comunidad" [(ngModel)]="selectedComunidad" (change)="onComunidadChange()">
-        <option value="">Todas</option>
-        <option *ngFor="let comunidad of comunidadesAutonomas" [value]="comunidad.IDCCAA">
-          {{ comunidad.CCAA }}
-        </option>
-      </select>
+      <div class="filter-item">
+        <label for="comunidad">Comunidad Autónoma:</label>
+        <select id="comunidad" [(ngModel)]="selectedComunidad" (change)="onComunidadChange()">
+          <option value="">Todas</option>
+          <option *ngFor="let comunidad of comunidadesAutonomas" [value]="comunidad.IDCCAA">
+            {{ comunidad.CCAA }}
+          </option>
+        </select>
+      </div>
 
-      <label for="provincia">Provincia:</label>
-      <select id="provincia" [(ngModel)]="selectedProvincia" [disabled]="!selectedComunidad">
-        <option value="">Seleccione Provincia</option>
-        <option *ngFor="let provincia of provincias" [value]="provincia.IDPovincia">
-          {{ provincia.nombre }}
-        </option>
-      </select>
+      <div class="filter-item">
+        <label for="provincia">Provincia:</label>
+        <select id="provincia" [(ngModel)]="selectedProvincia" [disabled]="!selectedComunidad">
+          <option value="">Seleccione Provincia</option>
+          <option *ngFor="let provincia of provincias" [value]="provincia.IDPovincia">
+            {{ provincia.nombre }}
+          </option>
+        </select>
+      </div>
 
-      <button (click)="filterGasolineras()">Filtrar</button>
+      <div class="filter-item button-container">
+        <button (click)="filterGasolineras()">Filtrar</button>
+      </div>
     </div>
 
     <div class="grid">
@@ -56,8 +70,7 @@
           <p>Dirección: {{ gasolinera.direccion }}</p>
           <p>Comunidad Autónoma: {{ comunidadMap[gasolinera.comunidad] }}</p>
           <p>Provincia: {{ gasolinera.provincia }}</p>
-        </div>
+          <a [href]="gasolinera.direccion | googleMaps" target="_blank" class="google-maps-button">Ver en Google Maps</a>        </div>
       </div>
     </div>
   </div>
-</body>
