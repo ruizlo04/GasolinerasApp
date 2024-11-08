@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Gasolinera } from '../../modules/gasolinera.interface';
 import { GasolineraService } from '../../services/gasolinera.service';
-import { GoogleMapsPipe } from '../../pipes/google-maps.pipe';
 
 @Component({
   selector: 'app-listado-gas',
@@ -34,7 +33,7 @@ export class ListadoGasComponent implements OnInit {
       let parsedData;
       try {
         parsedData = JSON.parse(respuestaEnString);
-        let arrayGasolineras = parsedData['ListaEESSPrecio'];
+        let arrayGasolineras = parsedData;
 
         console.log('Array de gasolineras procesado:', arrayGasolineras);
 

@@ -10,9 +10,9 @@ export class GasolineraService {
 
   constructor(private http: HttpClient) {}
 
-  getGasolineras() {
-    return this.http.get(
-      'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/'
+  getGasolineras(): Observable<any> {
+    return this.http.get<any[]>(
+      'http://localhost:3000/ListaEESSPrecio'
     );
   }
 
@@ -24,5 +24,4 @@ export class GasolineraService {
     const url = `https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/Listados/ProvinciasPorComunidad/${idCCAA}`;
     return this.http.get<any[]>(url);  
   }
-  
 }
