@@ -39,9 +39,11 @@
         <label for="comunidad">Comunidad Autónoma:</label>
         <select id="comunidad" [(ngModel)]="selectedComunidad" (change)="onComunidadChange()">
           <option value="">Todas</option>
-          <option *ngFor="let comunidad of comunidadesAutonomas" [value]="comunidad.IDCCAA">
-            {{ comunidad.CCAA }}
-          </option>
+          @for(comunidad of comunidadesAutonomas; track comunidad.IDCCAA){
+            <option value="{{ comunidad.IDCCAA }}">
+              {{ comunidad.CCAA }}
+            </option>
+          }
         </select>
       </div>
 
@@ -49,9 +51,11 @@
         <label for="provincia">Provincia:</label>
         <select id="provincia" [(ngModel)]="selectedProvincia" [disabled]="!selectedComunidad">
           <option value="">Seleccione Provincia</option>
-          <option *ngFor="let provincia of provincias" [value]="provincia.IDPovincia">
-            {{ provincia.nombre }}
-          </option>
+          @for(provincia of provincias; track provincia.IDPovincia){
+            <option value="{{ provincia.IDPovincia }}">
+              {{ provincia.nombre }}
+            </option>
+          }
         </select>
       </div>
 
@@ -61,16 +65,18 @@
     </div>
 
     <div class="grid">
-      <div *ngFor="let gasolinera of filteredGasolineras" class="gas-station-card">
-        <div class="info">
-          <p>Estación: {{ gasolinera.nombre }}, IDEESS: {{ gasolinera.id }}</p>
-          <p>Gasolina 95: {{ gasolinera.price95 }}</p>
-          <p>Diesel: {{ gasolinera.priceDiesel }}</p>
-          <p>Código postal: {{ gasolinera.postalCode }}</p>
-          <p>Dirección: {{ gasolinera.direccion }}</p>
-          <p>Comunidad Autónoma: {{ comunidadMap[gasolinera.comunidad] }}</p>
-          <p>Provincia: {{ gasolinera.provincia }}</p>
-          <a [href]="gasolinera.direccion | googleMaps" target="_blank" class="google-maps-button">Ver en Google Maps</a>        </div>
-      </div>
-    </div>
+      @for(gasolinera of filteredGasolineras; track gasolinera.id){
+        <div class="gas-station-card">
+          <div class="info">
+            <p>Estación: {{ gasolinera.nombre }}, IDEESS: {{ gasolinera.id }}</p>
+            <p>Gasolina 95: {{ gasolinera.price95 }}</p>
+            <p>Diesel: {{ gasolinera.priceDiesel }}</p>
+            <p>Código postal: {{ gasolinera.postalCode }}</p>
+            <p>Dirección: {{ gasolinera.direccion }}</p>
+            <p>Comunidad Autónoma: {{ comunidadMap[gasolinera.comunidad] }}</p>
+            <p>Provincia: {{ provinciaMap[gasolinera.provincia] }}</p>
+            <a [href]="gasolinera.direccion | googleMaps" target="_blank" class="google-maps-button">Ver en Google Maps</a>
+          </div>
+        </div>
+      }
   </div>

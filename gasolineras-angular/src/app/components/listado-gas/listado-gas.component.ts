@@ -23,6 +23,7 @@ export class ListadoGasComponent implements OnInit {
   selectedComunidad: string = '';
   selectedProvincia: string = '';
   comunidadMap: { [key: string]: string } = {};
+  provinciaMap: { [key: string]: string } = {}; 
 
   constructor(private gasService: GasolineraService) {}
 
@@ -61,6 +62,25 @@ export class ListadoGasComponent implements OnInit {
 
       console.log('Mapa de comunidades (ID a Nombre):', this.comunidadMap);
     });
+
+    this.gasService.getProvincias().subscribe((data) => {
+      console.log('Provincias desde la API:', data);
+      this.provincias = data;
+      this.provinciaMap = this.provincias.reduce((acc, provincia) => {
+        acc[provincia.IDPovincia] = provincia.nombre;
+        return acc;
+      }, {});
+      
+
+      this.listadoGasolineras.forEach((gasolinera) => {
+        gasolinera.provincia = this.provinciaMap[gasolinera.provincia] || gasolinera.provincia || 'No disponible';
+      });
+      
+      
+      
+      console.log('Mapa de provincias (ID a nombre):', this.provinciaMap);
+      console.log('Gasolineras con nombres de provincias:', this.listadoGasolineras);
+    });
   }
 
   onComunidadChange() {
@@ -73,12 +93,21 @@ export class ListadoGasComponent implements OnInit {
             IDPovincia: provincia.IDPovincia,
             nombre: provincia.Provincia
           }));
+
+          this.provinciaMap = this.provincias.reduce((acc, provincia) => {
+            acc[provincia.IDPovincia] = provincia.nombre;
+            return acc;
+          }, {});
+
+          console.log('Mapa de provincias (IDPovincia a nombre):', this.provinciaMap);
         } else {
           this.provincias = [];
+          this.provinciaMap = {}; 
         }
       });
     } else {
       this.provincias = [];
+      this.provinciaMap = {};
     }
   }
 
@@ -88,21 +117,16 @@ export class ListadoGasComponent implements OnInit {
         return gasolineraChusquera['IDEESS'] && gasolineraChusquera['Rótulo'];
       })
       .map((gasolineraChusquera: any) => {
-        console.log('Datos de gasolinera:', gasolineraChusquera);
-        const gasolinera = new Gasolinera(
+        return new Gasolinera(
           gasolineraChusquera['IDEESS'],
           gasolineraChusquera['Rótulo'],
           parseFloat(gasolineraChusquera['Precio Gasolina 95 E5'].replace(',', '.')),
           parseFloat(gasolineraChusquera['Precio Gasoleo A'].replace(',', '.')),
-          gasolineraChusquera['C.P.'],
+          gasolineraChusquera['C.P.'], 
           gasolineraChusquera['Dirección'],
           gasolineraChusquera['IDCCAA'],
-          ''
+          gasolineraChusquera['IDProvincia']
         );
-
-        console.log('Gasolinera creada con IDCCAA:', gasolinera);
-
-        return gasolinera;
       });
   }
 
@@ -117,18 +141,25 @@ export class ListadoGasComponent implements OnInit {
       const matchesFuelType = this.fuelType === '' ||
         (this.fuelType === 'Gasolina 95' && gasolinera.price95 > 0) ||
         (this.fuelType === 'Diesel' && gasolinera.priceDiesel > 0);
-
-      const matchesPriceRange = gasolinera.price95 >= this.minPrice && gasolinera.price95 <= this.maxPrice;
-      const matchesPostalCode = this.postalCodeControl.value === '' || gasolinera.postalCode === this.postalCodeControl.value;
+  
+      const matchesPriceRange = this.fuelType === 'Gasolina 95' 
+        ? gasolinera.price95 >= this.minPrice && gasolinera.price95 <= this.maxPrice
+        : this.fuelType === 'Diesel'
+        ? gasolinera.priceDiesel >= this.minPrice && gasolinera.priceDiesel <= this.maxPrice
+        : (gasolinera.price95 >= this.minPrice && gasolinera.price95 <= this.maxPrice) || 
+          (gasolinera.priceDiesel >= this.minPrice && gasolinera.priceDiesel <= this.maxPrice);
+  
+      const matchesPostalCode = this.postalCodeControl.value === '' || this.postalCodeControl.value == null || gasolinera.postalCode === this.postalCodeControl.value;
       const matchesComunidad = this.selectedComunidad === '' || gasolinera.comunidad === this.selectedComunidad;
       const matchesProvincia = this.selectedProvincia === '' || gasolinera.provincia === this.selectedProvincia;
-
+  
       console.log('Comunidad seleccionada (ID):', this.selectedComunidad);
       console.log('IDCCAA de gasolinera:', gasolinera.comunidad);
-
+      console.log(this.filteredGasolineras.map(gasolinera => gasolinera.provincia));
+  
       return matchesFuelType && matchesPriceRange && matchesPostalCode && matchesComunidad && matchesProvincia;
     });
-
+  
     if (this.filteredGasolineras.length === 0) {
       console.log('No hay resultados que coincidan con la búsqueda.');
     }
